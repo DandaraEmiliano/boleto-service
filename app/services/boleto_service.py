@@ -14,14 +14,15 @@ def gerar_boleto(dados: BoletoCreate) -> BoletoResponse:
         "valor": dados.valor,
         "vencimento": dados.vencimento.isoformat(),
         "codigo": codigo,
-        "linha_digitavel": linha_digitavel
+        "linha_digitavel": linha_digitavel,
+        "status": "erro"
     }
 
     result = boletos_collection.insert_one(boleto)
     boleto["_id"] = str(result.inserted_id)
 
     redis_client.rpush("fila_boletos", json.dumps(boleto))
-    
+
     return BoletoResponse(**boleto)
 
 def buscar_boleto_por_codigo(codigo: str) -> BoletoResponse:

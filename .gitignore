@@ -1,0 +1,47 @@
+# Ambiente virtual
+venv/
+ENV/
+env/
+.venv/
+
+# Diretório de dados temporários
+data/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Arquivos de log e debug
+*.log
+
+# Configs do VSCode
+.vscode/
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Teste / cobertura
+htmlcov/
+.tox/
+.nox/
+.coverage
+coverage.xml
+.pytest_cache/
+
+# Arquivos temporários
+*.swp
+*.swo
+
+# mypy / pylint / flake8
+.mypy_cache/
+.pyre/
+.pytype/
+
+# pip
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Arquivos do SQLite (caso use em dev)
+*.sqlite3
