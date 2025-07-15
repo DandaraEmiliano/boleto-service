@@ -1,97 +1,118 @@
-# 📄 Boleto Service
 
-API RESTful para geração e reemissão de boletos bancários, com persistência em MongoDB.
+# Boleto Service
 
----
-
-## ✅ Funcionalidades Implementadas
-
-- **POST /boletos**  
-  Gera um boleto com dados enviados (nome, CPF, valor, vencimento).  
-  Gera um código único e linha digitável simulada.  
-  Salva os dados no MongoDB.
-
-- **GET /boletos/{codigo}**  
-  Busca um boleto salvo com base no código gerado anteriormente.
+API RESTful para geração, reemissão e reprocessamento de boletos bancários, com persistência em MongoDB e uso de Redis para fila de processamento.
 
 ---
 
-## 🧱 Tecnologias Utilizadas
+## 📌 Tecnologias
 
-- **Python 3.13**
+- **Python 3.11**
 - **FastAPI**
-- **MongoDB** (via Docker)
-- **Pymongo**
-- **Docker Compose**
+- **MongoDB (pymongo)**
+- **Redis (redis-py)**
+- **Pytest** – testes automatizados
+- **Docker + Docker Compose**
+- **GitHub Actions** – CI com execução de testes
 
 ---
 
-## 📦 Estrutura de Pastas
+## 🚀 Funcionalidades
+
+### 🔸 POST `/boletos`
+
+Gera um novo boleto com os seguintes dados:
+
+- `nome`
+- `cpf`
+- `valor`
+- `vencimento`
+
+Além disso, o sistema gera:
+- `codigo` único
+- `linha_digitavel` simulada
+
+O boleto é salvo com status `"enviado"`.
+
+---
+
+### 🔸 GET `/boletos/{codigo}`
+
+Busca um boleto existente pelo código gerado anteriormente.
+
+---
+
+### 🔸 POST `/boletos/{codigo}/reprocessar`
+
+Se o boleto tiver status `"erro"`, ele será reenviado para a fila Redis `fila_reprocessamento`, simulando reprocessamento.
+
+---
+
+## ⚙️ Como rodar localmente
+
+### Pré-requisitos
+
+- Python 3.11
+- Docker e Docker Compose
+
+### Setup
+
+```bash
+# Clonar o repositório
+git clone https://github.com/DandaraEmiliano/boleto-service.git
+cd boleto-service
+
+# Subir MongoDB e Redis
+docker-compose up -d
+
+# Criar ambiente virtual e instalar dependências
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Rodar a aplicação
+uvicorn app.main:app --reload
+```
+
+Acesse a documentação Swagger em:  
+👉 `http://localhost:8000/docs`
+
+---
+
+## 🧪 Executar testes
+
+```bash
+pytest
+```
+
+---
+
+## 🔄 Integração Contínua
+
+O pipeline de CI está configurado via **GitHub Actions** e executa automaticamente os testes em cada `push` ou `pull_request`.
+
+---
+
+## 📂 Estrutura do Projeto
 
 ```
 boleto-service/
 ├── app/
-│   ├── api/                
-│   │   └── boleto.py
-│   ├── core/               
-│   │   └── mongo.py
-│   ├── models/             
-│   ├── schema/             
-│   │   └── boleto.py
-│   ├── services/           
-│   │   └── boleto_service.py
-│   └── main.py             
-├── docker-compose.yml      
-├── requirements.txt        
-└── .gitignore
+│   ├── api/
+│   ├── core/
+│   ├── models/
+│   ├── services/
+│   └── main.py
+├── tests/
+│   └── unit/
+├── docker-compose.yml
+├── requirements.txt
+├── .github/workflows/ci.yml
+└── README.md
 ```
 
 ---
 
-## ▶️ Como rodar localmente
-
-1. Subir o MongoDB:
-```bash
-docker compose up -d
-```
-
-2. Ativar o ambiente virtual e instalar dependências:
-```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-3. Rodar a aplicação:
-```bash
-uvicorn app.main:app --reload
-```
-
-4. Acessar a documentação Swagger:
-```
-http://localhost:8000/docs
-```
-
----
-
-## 🔃 Exemplo de uso
-
-### POST /boletos
-
-```json
-{
-  "nome": "Dandara",
-  "cpf": "12345678900",
-  "valor": 150.0,
-  "vencimento": "2025-07-10"
-}
-```
-
-### GET /boletos/{codigo}
-
-Retorna boleto persistido com base no código gerado.
-
----
 ## 👩🏻‍💻 Autora
 
 **Dandara Emiliano**  
