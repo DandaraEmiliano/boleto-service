@@ -6,3 +6,4 @@ reportlab
 redis
 pytest
 httpx
+pymongo
