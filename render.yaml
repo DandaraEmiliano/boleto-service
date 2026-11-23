@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: boleto-service
+    runtime: docker
+    plan: free
+    region: ohio
+    healthCheckPath: /health
+    autoDeployTrigger: "off"
+    envVars:
+      - key: BOLETO_DEMO
+        value: "1"
+      - key: BOLETO_SECURE_COOKIE
+        value: "1"
