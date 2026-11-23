@@ -1,3 +1,9 @@
-import redis
+from os import getenv
 
-redis_client = redis.Redis(host='localhost', port=6379, db=0)
+from redis import Redis
+
+redis_client = Redis.from_url(
+    getenv("REDIS_URL", "redis://localhost:6379/0"),
+    socket_connect_timeout=2,
+    socket_timeout=5,
+)

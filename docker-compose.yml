@@ -1,13 +1,43 @@
-version: '3.8'
+x-app: &app
+  build: .
+  image: boleto-service:local
+  environment:
+    MONGO_URL: mongodb://mongodb:27017
+    REDIS_URL: redis://redis:6379/0
+  depends_on:
+    mongodb:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
 services:
-  mongodb:
-    image: mongo
-    container_name: mongo
+  web:
+    <<: *app
     ports:
-      - "27017:27017"
+      - "127.0.0.1:8000:8000"
+  emissao:
+    <<: *app
+    command: ["python", "-m", "app.workers.boleto_worker"]
+  reprocessamento:
+    <<: *app
+    command: ["python", "-m", "app.workers.reprocessamento_worker"]
+  mongodb:
+    image: mongo:8.0
+    ports:
+      - "127.0.0.1:27017:27017"
     volumes:
       - ./data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand({ping:1}).ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
   redis:
-    image: redis
+    image: redis:7.4-alpine
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
